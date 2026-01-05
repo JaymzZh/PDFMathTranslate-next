@@ -602,6 +602,8 @@ def create_babeldoc_config(settings: SettingsModel, file: Path) -> BabelDOCConfi
         # Term extraction translator (can be different from main translator)
         term_extraction_translator=term_extraction_translator,
         term_pool_max_workers=settings.translation.term_pool_max_workers,
+        use_rich_pbar=settings.translation.use_rich_pbar,
+        progress_monitor=settings.translation.progress_monitor,
     )
     return babeldoc_config
 
@@ -672,8 +674,9 @@ async def do_translate_file_async(
         pages=None,
         output_dir=None,
         doc_layout_model=1,
-        use_rich_pbar=True,
-    )
+        use_rich_pbar=settings.translation.use_rich_pbar,
+        progress_monitor=settings.translation.progress_monitor
+    )  # type: ignore[arg-type]
     progress_context, progress_handler = create_progress_handler(rich_pbar_config)
     input_files = settings.basic.input_files
     assert len(input_files) >= 1, "At least one input file is required"

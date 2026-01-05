@@ -7,12 +7,15 @@ from pathlib import Path
 
 from pydantic import BaseModel
 from pydantic import Field
+from pydantic import ConfigDict
 
 from pdf2zh_next.config.translate_engine_model import (
     TERM_EXTRACTION_ENGINE_SETTING_TYPE,
 )
 from pdf2zh_next.config.translate_engine_model import TRANSLATION_ENGINE_METADATA_MAP
 from pdf2zh_next.config.translate_engine_model import TRANSLATION_ENGINE_SETTING_TYPE
+
+from babeldoc.progress_monitor import ProgressMonitor
 
 log = logging.getLogger(__name__)
 
@@ -82,6 +85,8 @@ class GUISettings(BaseModel):
 class TranslationSettings(BaseModel):
     """Translation related settings"""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     min_text_length: int = Field(
         default=5, description="Minimum text length to translate"
     )
@@ -126,6 +131,14 @@ class TranslationSettings(BaseModel):
     primary_font_family: str | None = Field(
         default=None,
         description="Override primary font family for translated text. Choices: 'serif' for serif fonts, 'sans-serif' for sans-serif fonts, 'script' for script/italic fonts. If not specified, uses automatic font selection based on original text properties.",
+    )
+    use_rich_pbar: bool = Field(
+        default=True,
+        description="Use rich progress bar for translation progress display, if False, use simple text progress output.",
+    )
+    progress_monitor: ProgressMonitor | None = Field(
+        default=None,
+        description="Progress monitor instance used to report translation progress and status updates.",
     )
 
 
